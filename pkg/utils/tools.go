@@ -1,4 +1,4 @@
-package https_proxy
+package utils
 
 import (
 	"crypto/rand"
@@ -7,35 +7,30 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
-	"https-proxy/pkg/service"
-	"log"
+	"github.com/spf13/viper"
 	"math/big"
-	"net/http"
-	"os"
 	"time"
 )
 
-var logger = log.New(os.Stderr, "httpsproxy:", log.Llongfile|log.LstdFlags)
+func LoadYamlConfig(filepath, filename string, config interface{}) error {
+	v := viper.New()
+	v.SetConfigName(filename)
+	v.AddConfigPath(filepath)
+	v.SetConfigType("yaml")
 
-func Serve(listenAdress string){
-	cert, err := genCertificate()
-	if err != nil {
-		logger.Fatal(err)
+	if err := v.ReadInConfig(); err != nil {
+		return err
 	}
 
-	server := &http.Server{
-		Addr: listenAdress,
-		TLSConfig: 	&tls.Config{Certificates: []tls.Certificate{cert},},
-		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			service.Serve(w, r)
-		}),
+	if err := v.Unmarshal(&config); err != nil {
+		return err
 	}
 
-	logger.Fatal(server.ListenAndServe())
+	return nil
 }
 
-func genCertificate() (cert tls.Certificate, err error){
-	rawCert, rawKey, err := generateKeyPair()
+func GenCertificate() (cert tls.Certificate, err error){
+	rawCert, rawKey, err := GenerateKeyPair()
 	if err != nil {
 		return
 	}
@@ -43,7 +38,7 @@ func genCertificate() (cert tls.Certificate, err error){
 
 }
 
-func generateKeyPair() (rawCert, rawKey []byte, err error) {
+func GenerateKeyPair() (rawCert, rawKey []byte, err error) {
 	// Create private key and self-signed certificate
 	// Adapted from https://golang.org/src/crypto/tls/generate_cert.go
 
