@@ -41,4 +41,7 @@ func (c *Context) NextAfter() {
 	}
 }
 
+func (c *Context) Abort()  {
+	c.indexBefore = len(c.BeforeRequest)
+}
 

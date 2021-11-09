@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"github.com/Johnathan-Chan/proxy/pkg/conf"
 	"github.com/Johnathan-Chan/proxy/pkg/core"
+	"github.com/Johnathan-Chan/proxy/pkg/middlewares"
 	"github.com/Johnathan-Chan/proxy/pkg/service"
 	"github.com/Johnathan-Chan/proxy/pkg/utils"
 	"net/http"
@@ -22,7 +23,7 @@ func main(){
 	}
 
 	proxy := core.NewProxy()
-	//proxy.UseBefore(middlewares.ConnectionProtocol())
+	proxy.UseBefore(middlewares.HttpHeaderAuth())
 	proxy.Handler(service.HandleHttpAndHttps)
 
 	server := &http.Server{
