@@ -29,24 +29,17 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func (p *Proxy) handler(ctx *Context) {
 	ctx.BeforeRequest = p.beforeRequest
-	ctx.AfterResponse = p.afterResponse
 	ctx.NextBefore()
-	ctx.NextAfter()
 }
 
 func (p *Proxy) UseBefore(before ...HandlerFunc) {
 	p.beforeRequest = append(p.beforeRequest, before...)
 }
 
-func (p *Proxy) UseAfter(after ...HandlerFunc){
-	p.afterResponse = append(p.afterResponse, after...)
-}
 
 func (p *Proxy) Handler(core HandlerFunc){
 	p.beforeRequest = append(p.beforeRequest, core)
 }
-
-
 
 func Transfer(destination io.WriteCloser, source io.ReadCloser) {
 	defer destination.Close()

@@ -23,7 +23,7 @@ func main(){
 	}
 
 	proxy := core.NewProxy()
-	proxy.UseBefore(middlewares.HttpHeaderAuth())
+	proxy.UseBefore(middlewares.ProxyAuth())
 	proxy.Handler(service.HandleHttpAndHttps)
 
 	server := &http.Server{

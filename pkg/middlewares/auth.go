@@ -12,7 +12,7 @@ import (
 	"unsafe"
 )
 
-func HttpHeaderAuth() core.HandlerFunc{
+func ProxyAuth() core.HandlerFunc{
 	return func(ctx *core.Context) {
 		auth := ctx.Request.Header.Get("Proxy-Authorization")
 		auth = strings.Replace(auth, "Basic ", "", 1)
@@ -25,8 +25,8 @@ func HttpHeaderAuth() core.HandlerFunc{
 			ctx.Abort()
 			log.Println("认证失败")
 
-			ctx.ResponseWriter.WriteHeader(http.StatusOK)
-			ctx.ResponseWriter.Write([]byte("认证失败"))
+			ctx.Writer.WriteHeader(http.StatusOK)
+			ctx.Writer.Write([]byte("认证失败"))
 			return
 		}
 

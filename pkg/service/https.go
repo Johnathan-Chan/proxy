@@ -10,20 +10,20 @@ import (
 func HandleHttps(ctx *core.Context){
 	destConn, err := net.DialTimeout("tcp", ctx.Request.Host, 60*time.Second)
 	if err != nil {
-		http.Error(ctx.ResponseWriter, err.Error(), http.StatusServiceUnavailable)
+		http.Error(ctx.Writer, err.Error(), http.StatusServiceUnavailable)
 		return
 	}
-	ctx.ResponseWriter.WriteHeader(http.StatusOK)
+	ctx.Writer.WriteHeader(http.StatusOK)
 
-	hijacker, ok := ctx.ResponseWriter.(http.Hijacker)
+	hijacker, ok := ctx.Writer.(http.Hijacker)
 	if !ok {
-		http.Error(ctx.ResponseWriter, "Hijacking not supported", http.StatusInternalServerError)
+		http.Error(ctx.Writer, "Hijacking not supported", http.StatusInternalServerError)
 		return
 	}
 
 	clientConn, _, err := hijacker.Hijack()
 	if err != nil {
-		http.Error(ctx.ResponseWriter, err.Error(), http.StatusServiceUnavailable)
+		http.Error(ctx.Writer, err.Error(), http.StatusServiceUnavailable)
 	}
 
 	go core.Transfer(destConn, clientConn)

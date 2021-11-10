@@ -9,7 +9,7 @@ import (
 func HandleHttp(ctx *core.Context){
 	resp, err := http.DefaultTransport.RoundTrip(ctx.Request)
 	if err != nil {
-		http.Error(ctx.ResponseWriter, err.Error(), http.StatusServiceUnavailable)
+		http.Error(ctx.Writer, err.Error(), http.StatusServiceUnavailable)
 		return
 	}
 
@@ -17,7 +17,7 @@ func HandleHttp(ctx *core.Context){
 		defer resp.Body.Close()
 	}
 
-	core.CopyHeader(ctx.ResponseWriter.Header(), resp.Header)
-	ctx.ResponseWriter.WriteHeader(resp.StatusCode)
-	io.Copy(ctx.ResponseWriter, resp.Body)
+	core.CopyHeader(ctx.Writer.Header(), resp.Header)
+	ctx.Writer.WriteHeader(resp.StatusCode)
+	io.Copy(ctx.Writer, resp.Body)
 }
